@@ -383,7 +383,7 @@ Spacemacs use spacemacs-.*-mode-map, we here use original mode map."
         "ESC" nil
         "M-s" nil
         )
-  (compleseus/init-consult-yasnippet )()
+  (compleseus/init-consult-yasnippet)
   (compleseus/init-embark)
   (compleseus/init-embark-consult)
   (compleseus/init-orderless)

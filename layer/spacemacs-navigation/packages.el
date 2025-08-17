@@ -119,11 +119,12 @@
                      ahs-back-to-start
                      ahs-change-range))
         (let* ((advice (intern (format "spacemacs/%s" (symbol-name sym)))))
-          (eval `(defadvice ,sym (around ,advice activate)
-                   (spacemacs/ahs-highlight-now-wrapper)
-                   ad-do-it
-                   (spacemacs/ahs-highlight-now-wrapper)
-                   (setq spacemacs-last-ahs-highlight-p (ahs-highlight-p))))))
+          (advice-add sym :around
+                      (lambda (orig-fun &rest args)
+                        (spacemacs/ahs-highlight-now-wrapper)
+                        (apply orig-fun args)
+                        (spacemacs/ahs-highlight-now-wrapper)
+                        (setq spacemacs-last-ahs-highlight-p (ahs-highlight-p))))))
 
       ;; transient state
       (spacemacs|define-transient-state symbol-highlight
@@ -201,14 +202,14 @@
     (progn
       ;; fixed a weird issue where toggling display does not
       ;; swtich to text mode
-      (defadvice doc-view-toggle-display
-          (around spacemacs/doc-view-toggle-display activate)
-        (if (eq major-mode 'doc-view-mode)
-            (progn
-              ad-do-it
-              (text-mode)
-              (doc-view-minor-mode))
-          ad-do-it)))))
+      (advice-add 'doc-view-toggle-display :around
+                  (lambda (orig-fun &rest args)
+                    (if (eq major-mode 'doc-view-mode)
+                        (progn
+                          (apply orig-fun args)
+                          (text-mode)
+                          (doc-view-minor-mode))
+                      (apply orig-fun args)))))))
 
 (defun spacemacs-navigation/init-golden-ratio ()
   (use-package golden-ratio

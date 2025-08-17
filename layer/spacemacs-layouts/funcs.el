@@ -747,25 +747,27 @@ graphical frames, and one set for terminal frames."
     (--zip-with (set-persp-parameter it other persp)
                 param-names workspace-params)))
 
-(defun spacemacs/load-eyebrowse-for-perspective (type &optional frame)
+(defun spacemacs/load-eyebrowse-for-perspective (&rest args)
   "Load an eyebrowse workspace according to a perspective's parameters.
  FRAME's perspective is the perspective that is considered, defaulting to
  the current frame's perspective.
  If the perspective doesn't have a workspace, create one."
-  (when (eq type 'frame)
-    (let* ((workspace-params (spacemacs//get-persp-workspace (get-frame-persp frame) frame))
-           (window-configs (nth 0 workspace-params))
-           (current-slot (nth 1 workspace-params))
-           (last-slot (nth 2 workspace-params)))
-      (if window-configs
-          (progn
-            (eyebrowse--set 'window-configs window-configs frame)
-            (eyebrowse--set 'current-slot current-slot frame)
-            (eyebrowse--set 'last-slot last-slot frame)
-            (eyebrowse--load-window-config current-slot))
-        (eyebrowse--set 'window-configs nil frame)
-        (eyebrowse-init frame)
-        (spacemacs/save-eyebrowse-for-perspective frame)))))
+  (let ((type (if args (car args) 'frame))
+        (frame (if (> (length args) 1) (cadr args) nil)))
+    (when (eq type 'frame)
+      (let* ((workspace-params (spacemacs//get-persp-workspace (get-frame-persp frame) frame))
+             (window-configs (nth 0 workspace-params))
+             (current-slot (nth 1 workspace-params))
+             (last-slot (nth 2 workspace-params)))
+        (if window-configs
+            (progn
+              (eyebrowse--set 'window-configs window-configs frame)
+              (eyebrowse--set 'current-slot current-slot frame)
+              (eyebrowse--set 'last-slot last-slot frame)
+              (eyebrowse--load-window-config current-slot))
+          (eyebrowse--set 'window-configs nil frame)
+          (eyebrowse-init frame)
+          (spacemacs/save-eyebrowse-for-perspective frame))))))
 
 (defun spacemacs/load-eyebrowse-after-loading-layout (_state-file _phash persp-names)
   "Bridge between `persp-after-load-state-functions' and
