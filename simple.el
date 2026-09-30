@@ -6,7 +6,7 @@
 
 ;;; Redefine Missing spacemacs variables & functions
 
-(defvar spacemacs-version doom-version)
+(defvar spacemacs-version (if (fboundp 'doom-version) (doom-version) (bound-and-true-p doom-version)))
 (defvar spacemacs-post-user-config-hook nil
   "Hook run after dotspacemacs/user-config")
 (defvar spacemacs-post-user-config-hook-run nil
